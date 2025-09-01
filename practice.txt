@@ -1,0 +1,705 @@
+	SQL> set pagesize 200;
+SQL> set linesize 200;
+SQL> drop table salary_detail
+  2  ;
+
+Table dropped.
+
+SQL> drop table emp_detail;
+
+Table dropped.
+
+SQL> CREATE TABLE Emp_detail (
+  2      empid       NUMBER(5),
+  3      first_name  VARCHAR2(30) NOT NULL,
+  4      last_name   VARCHAR2(30) NOT NULL,
+  5      dob         DATE,
+  6      adharno     VARCHAR2(12) UNIQUE,
+  7      CONSTRAINT pk_emp PRIMARY KEY (empid)
+  8  );
+
+Table created.
+
+SQL> CREATE TABLE Salary_detail (
+  2      empid         NUMBER(5),
+  3      job_id        VARCHAR2(10),
+  4      salary        NUMBER(8,2),
+  5      comm          NUMBER(5,2),
+  6      department_id NUMBER(5),
+  7      CONSTRAINT pk_salary PRIMARY KEY (empid),
+  8      CONSTRAINT fk_emp FOREIGN KEY (empid) REFERENCES Emp_detail(empid)
+  9  );
+
+Table created.
+
+SQL> -------change data type of salary---
+SQL> ALTER TABLE Salary_detail MODIFY salary NUMBER(10,2);
+
+Table altered.
+
+SQL> ------rename column comm to commission----
+SQL> alter table salary_detail rename column comm to commission;
+
+Table altered.
+
+SQL> ------drop column dob----
+SQL> alter table emp_detail drop column dob;
+
+Table altered.
+
+SQL> ------insert multiple records in emp_details
+SQL> INSERT ALL
+  2  INTO Emp_detail VALUES (102, 'Amit', 'Sharma', DATE '1995-08-15', '234567890123')
+  3  INTO Emp_detail VALUES (103, 'Riya', 'Patil', DATE '1992-02-20', '345678901234')
+  4  INTO Emp_detail VALUES (104, 'Arjun', 'Deshmukh', DATE '1998-09-25', '456789012345')
+  5  SELECT * FROM dual;
+INTO Emp_detail VALUES (102, 'Amit', 'Sharma', DATE '1995-08-15', '234567890123')
+     *
+ERROR at line 2:
+ORA-00913: too many values 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  INSERT ALL
+  2  INTO Emp_detail VALUES (102, 'Amit', 'Sharma', '234567890123')
+  3  INTO Emp_detail VALUES (103, 'Riya', 'Patil' , '345678901234')
+  4  INTO Emp_detail VALUES (104, 'Arjun', 'Deshmukh', '456789012345')
+  5* SELECT * FROM dual
+SQL> /
+
+3 rows created.
+
+SQL> select * from emp_details;
+select * from emp_details
+              *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+
+SQL> select * from emp_detail;
+
+     EMPID FIRST_NAME                     LAST_NAME                      ADHARNO                                                                                                                        
+---------- ------------------------------ ------------------------------ ------------                                                                                                                   
+       102 Amit                           Sharma                         234567890123                                                                                                                   
+       103 Riya                           Patil                          345678901234                                                                                                                   
+       104 Arjun                          Deshmukh                       456789012345                                                                                                                   
+
+SQL> -----update salary----
+SQL> update salary_detail set
+  2  salary=50000 where emp_id=102;
+salary=50000 where emp_id=102
+                   *
+ERROR at line 2:
+ORA-00904: "EMP_ID": invalid identifier 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  update salary_detail set
+  2* salary=50000 where empid=102
+SQL> /
+
+0 rows updated.
+
+SQL> INSERT INTO Salary_detail (empid, job_id, salary, commission, department_id)
+  2  VALUES (101, 'DEV01', 45000, 5000, 20);
+VALUES (101, 'DEV01', 45000, 5000, 20)
+                             *
+ERROR at line 2:
+ORA-01438: value larger than specified precision allowed for this column 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  INSERT INTO Salary_detail (empid, job_id, salary, commission, department_id)
+  2* VALUES (101, 'DEV01', 45000, 500, 20)
+SQL> /
+INSERT INTO Salary_detail (empid, job_id, salary, commission, department_id)
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (HR.FK_EMP) violated - parent key not found 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  INSERT INTO Salary_detail (empid, job_id, salary, commission, department_id)
+  2* VALUES (102, 'DEV01', 45000, 500, 20)
+SQL> /
+
+1 row created.
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  INSERT INTO Salary_detail (empid, job_id, salary, commission, department_id)
+  2* VALUES (103, 'cleark', 55000, 600, 30)
+SQL> /
+
+1 row created.
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  INSERT INTO Salary_detail (empid, job_id, salary, commission, department_id)
+  2* VALUES (104, 'pu_cleark', 12000, 700, 40)
+SQL> /
+
+1 row created.
+
+SQL> ------update salary------
+SQL> update salary_detail
+  2  set salary=50000 where emp_id=102;
+set salary=50000 where emp_id=102
+                       *
+ERROR at line 2:
+ORA-00904: "EMP_ID": invalid identifier 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  update salary_detail
+  2* set salary=50000 where empid=102
+SQL> /
+
+1 row updated.
+
+SQL> ------update commission for dept 20------
+SQL> UPDATE Salary_detail SET commission = 0.10 * salary WHERE department_id = 20;
+UPDATE Salary_detail SET commission = 0.10 * salary WHERE department_id = 20
+                                           *
+ERROR at line 1:
+ORA-01438: value larger than specified precision allowed for this column 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1* UPDATE Salary_detail SET commission = 0.1 * salary WHERE department_id = 20
+SQL> /
+UPDATE Salary_detail SET commission = 0.1 * salary WHERE department_id = 20
+                                          *
+ERROR at line 1:
+ORA-01438: value larger than specified precision allowed for this column 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1* UPDATE Salary_detail SET commission = 1 * salary WHERE department_id = 20
+SQL> /
+UPDATE Salary_detail SET commission = 1 * salary WHERE department_id = 20
+                                        *
+ERROR at line 1:
+ORA-01438: value larger than specified precision allowed for this column 
+
+
+SQL> ------increase salary-----
+SQL> update salary_detail set salry=salary+2000 where salary<30000;
+update salary_detail set salry=salary+2000 where salary<30000
+                         *
+ERROR at line 1:
+ORA-00904: "SALRY": invalid identifier 
+
+
+SQL> select * from salary_detail;
+
+     EMPID JOB_ID         SALARY COMMISSION DEPARTMENT_ID                                                                                                                                               
+---------- ---------- ---------- ---------- -------------                                                                                                                                               
+       102 DEV01           50000        500            20                                                                                                                                               
+       103 cleark          55000        600            30                                                                                                                                               
+       104 pu_cleark       12000        700            40                                                                                                                                               
+
+SQL> update salary_detail set salary=salary+2000 where salary<30000;
+
+1 row updated.
+
+SQL> ------set commission null for dept 30---
+SQL> update salary_detail set commission=null where department_id=30;
+
+1 row updated.
+
+SQL> --------insert without commission
+SQL> insert into salary_detail(empid, job_id, salary, department_id)
+  2  values(105,'HR',25000,30);
+insert into salary_detail(empid, job_id, salary, department_id)
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (HR.FK_EMP) violated - parent key not found 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  insert into salary_detail(empid, job_id, salary, department_id)
+  2* values(103,'HR',25000,30)
+SQL> /
+insert into salary_detail(empid, job_id, salary, department_id)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (HR.PK_SALARY) violated 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  insert into salary_detail(empid, job_id, salary, department_id)
+  2* values(105,'HR',25000,20)
+SQL> /
+insert into salary_detail(empid, job_id, salary, department_id)
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (HR.FK_EMP) violated - parent key not found 
+
+
+SQL> --------select all------
+SQL> select * from emp_detail
+  2  ;
+
+     EMPID FIRST_NAME                     LAST_NAME                      ADHARNO                                                                                                                        
+---------- ------------------------------ ------------------------------ ------------                                                                                                                   
+       102 Amit                           Sharma                         234567890123                                                                                                                   
+       103 Riya                           Patil                          345678901234                                                                                                                   
+       104 Arjun                          Deshmukh                       456789012345                                                                                                                   
+
+SQL> -------select first,last name
+SQL> select first_name, last_name from emp_details;
+select first_name, last_name from emp_details
+                                  *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1* select first_name, last_name from emp_detail
+SQL> 
+SQL> ;
+  1* select first_name, last_name from emp_detail
+SQL> ;
+  1* select first_name, last_name from emp_detail
+SQL> ;
+  1* select first_name, last_name from emp_detail
+SQL> ed
+Wrote file afiedt.buf
+
+  1* select first_name, last_name from emp_detail
+SQL> /
+
+FIRST_NAME                     LAST_NAME                                                                                                                                                                
+------------------------------ ------------------------------                                                                                                                                           
+Amit                           Sharma                                                                                                                                                                   
+Riya                           Patil                                                                                                                                                                    
+Arjun                          Deshmukh                                                                                                                                                                 
+
+SQL> ------sort by name
+SQL> select * from emp_detail order by desc;
+select * from emp_detail order by desc
+                                  *
+ERROR at line 1:
+ORA-00936: missing expression 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1* select * from emp_detail order by first_name desc
+SQL> /
+
+     EMPID FIRST_NAME                     LAST_NAME                      ADHARNO                                                                                                                        
+---------- ------------------------------ ------------------------------ ------------                                                                                                                   
+       103 Riya                           Patil                          345678901234                                                                                                                   
+       104 Arjun                          Deshmukh                       456789012345                                                                                                                   
+       102 Amit                           Sharma                         234567890123                                                                                                                   
+
+SQL> -------salary>4000----
+SQL> SELECT * FROM Salary_detail WHERE salary > 40000;
+
+     EMPID JOB_ID         SALARY COMMISSION DEPARTMENT_ID                                                                                                                                               
+---------- ---------- ---------- ---------- -------------                                                                                                                                               
+       102 DEV01           50000        500            20                                                                                                                                               
+       103 cleark          55000                       30                                                                                                                                               
+
+SQL> ----salary between-
+SQL> SELECT * FROM Salary_detail WHERE salary BETWEEN 30000 AND 50000;
+
+     EMPID JOB_ID         SALARY COMMISSION DEPARTMENT_ID                                                                                                                                               
+---------- ---------- ---------- ---------- -------------                                                                                                                                               
+       102 DEV01           50000        500            20                                                                                                                                               
+
+SQL> ------employees without commission
+SQL> SELECT * FROM Salary_detail WHERE commission IS NULL;
+
+     EMPID JOB_ID         SALARY COMMISSION DEPARTMENT_ID                                                                                                                                               
+---------- ---------- ---------- ---------- -------------                                                                                                                                               
+       103 cleark          55000                       30                                                                                                                                               
+
+SQL> --------employee with commssion---
+SQL> SELECT * FROM Salary_detail WHERE commission IS NOT NULL;
+
+     EMPID JOB_ID         SALARY COMMISSION DEPARTMENT_ID                                                                                                                                               
+---------- ---------- ---------- ---------- -------------                                                                                                                                               
+       102 DEV01           50000        500            20                                                                                                                                               
+       104 pu_cleark       14000        700            40                                                                                                                                               
+
+SQL> salary not 25000
+SP2-0734: unknown command beginning "salary not..." - rest of line ignored.
+SQL> --------salary not 25000
+SQL> SELECT * FROM Salary_detail WHERE salary <> 25000;
+
+     EMPID JOB_ID         SALARY COMMISSION DEPARTMENT_ID                                                                                                                                               
+---------- ---------- ---------- ---------- -------------                                                                                                                                               
+       102 DEV01           50000        500            20                                                                                                                                               
+       103 cleark          55000                       30                                                                                                                                               
+       104 pu_cleark       14000        700            40                                                                                                                                               
+
+SQL> -----first name start with A
+SQL> SELECT * FROM Emp_detail WHERE first_name LIKE 'A%';
+
+     EMPID FIRST_NAME                     LAST_NAME                      ADHARNO                                                                                                                        
+---------- ------------------------------ ------------------------------ ------------                                                                                                                   
+       102 Amit                           Sharma                         234567890123                                                                                                                   
+       104 Arjun                          Deshmukh                       456789012345                                                                                                                   
+
+SQL> -----last name ends with n
+SQL> SELECT * FROM Emp_detail WHERE last_name LIKE '%n';
+
+no rows selected
+
+SQL> ------name with 5 letters
+SQL> SELECT * FROM Emp_detail WHERE LENGTH(first_name) = 5;
+
+     EMPID FIRST_NAME                     LAST_NAME                      ADHARNO                                                                                                                        
+---------- ------------------------------ ------------------------------ ------------                                                                                                                   
+       104 Arjun                          Deshmukh                       456789012345                                                                                                                   
+
+SQL> ------adhar missing--
+SQL> SELECT * FROM Emp_detail WHERE adharno IS NULL;
+
+no rows selected
+
+SQL> ------not in dept 20
+SQL> SELECT * FROM Salary_detail WHERE department_id <> 20;
+
+     EMPID JOB_ID         SALARY COMMISSION DEPARTMENT_ID                                                                                                                                               
+---------- ---------- ---------- ---------- -------------                                                                                                                                               
+       103 cleark          55000                       30                                                                                                                                               
+       104 pu_cleark       14000        700            40                                                                                                                                               
+
+SQL> -----commission>salary
+SQL> SELECT * FROM Salary_detail WHERE commission > salary;
+
+no rows selected
+
+SQL> ------unique department_id
+SQL> SELECT DISTINCT department_id FROM Salary_detail;
+
+DEPARTMENT_ID                                                                                                                                                                                           
+-------------                                                                                                                                                                                           
+           30                                                                                                                                                                                           
+           20                                                                                                                                                                                           
+           40                                                                                                                                                                                           
+
+SQL> -----department 20 or 30
+SQL> SELECT * FROM Salary_detail WHERE department_id IN (20, 30);
+
+     EMPID JOB_ID         SALARY COMMISSION DEPARTMENT_ID                                                                                                                                               
+---------- ---------- ---------- ---------- -------------                                                                                                                                               
+       102 DEV01           50000        500            20                                                                                                                                               
+       103 cleark          55000                       30                                                                                                                                               
+
+SQL> -----salary in list
+SQL> SELECT * FROM Salary_detail WHERE salary IN (25000, 30000, 40000);
+
+no rows selected
+
+SQL> -----name contains sh
+SQL> SELECT * FROM Emp_detail WHERE first_name LIKE '%sh%';
+
+no rows selected
+
+SQL> -------multi row functions
+SQL> ----count employees
+SQL> select count(*) from emp_detail;
+
+  COUNT(*)                                                                                                                                                                                              
+----------                                                                                                                                                                                              
+         3                                                                                                                                                                                              
+
+SQL> ----max salary
+SQL> SELECT MAX(salary) FROM Salary_detail;
+
+MAX(SALARY)                                                                                                                                                                                             
+-----------                                                                                                                                                                                             
+      55000                                                                                                                                                                                             
+
+SQL> ----min salary
+SQL> SELECT MIN(salary) FROM Salary_detail;
+
+MIN(SALARY)                                                                                                                                                                                             
+-----------                                                                                                                                                                                             
+      14000                                                                                                                                                                                             
+
+SQL> ---average salary---
+SQL> SELECT AVG(salary) FROM Salary_detail;
+
+AVG(SALARY)                                                                                                                                                                                             
+-----------                                                                                                                                                                                             
+ 39666.6667                                                                                                                                                                                             
+
+SQL> ------sum of salaryies
+SQL> SELECT SUM(salary) FROM Salary_detail;
+
+SUM(SALARY)                                                                                                                                                                                             
+-----------                                                                                                                                                                                             
+     119000                                                                                                                                                                                             
+
+SQL> ------count without commission
+SQL> SELECT COUNT(*) FROM Salary_detail WHERE commission IS NULL;
+
+  COUNT(*)                                                                                                                                                                                              
+----------                                                                                                                                                                                              
+         1                                                                                                                                                                                              
+
+SQL> -----dept wise total
+SQL> SELECT department_id, SUM(salary) FROM Salary_detail GROUP BY department_id;
+
+DEPARTMENT_ID SUM(SALARY)                                                                                                                                                                               
+------------- -----------                                                                                                                                                                               
+           30       55000                                                                                                                                                                               
+           20       50000                                                                                                                                                                               
+           40       14000                                                                                                                                                                               
+
+SQL> department wise average
+SP2-0734: unknown command beginning "department..." - rest of line ignored.
+SQL> SELECT department_id, AVG(salary) FROM Salary_detail GROUP BY department_id;
+
+DEPARTMENT_ID AVG(SALARY)                                                                                                                                                                               
+------------- -----------                                                                                                                                                                               
+           30       55000                                                                                                                                                                               
+           20       50000                                                                                                                                                                               
+           40       14000                                                                                                                                                                               
+
+SQL> ----department wise employee count
+SQL> SELECT department_id, COUNT(*) FROM Salary_detail GROUP BY department_id;
+
+DEPARTMENT_ID   COUNT(*)                                                                                                                                                                                
+------------- ----------                                                                                                                                                                                
+           30          1                                                                                                                                                                                
+           20          1                                                                                                                                                                                
+           40          1                                                                                                                                                                                
+
+SQL> -----department total>100000
+SQL> SELECT department_id, SUM(salary)
+  2  FROM Salary_detail
+  3  GROUP BY department_id
+  4  HAVING SUM(salary) > 100000;
+
+no rows selected
+
+SQL> ----avg>50000
+SQL> SELECT department_id, AVG(salary)
+  2  FROM Salary_detail
+  3  GROUP BY department_id
+  4  HAVING AVG(salary) > 50000;
+
+DEPARTMENT_ID AVG(SALARY)                                                                                                                                                                               
+------------- -----------                                                                                                                                                                               
+           30       55000                                                                                                                                                                               
+
+SQL> ------departmet with more than 5 employees
+SQL> SELECT department_id, COUNT(*)
+  2  FROM Salary_detail
+  3  GROUP BY department_id
+  4  HAVING COUNT(*) > 5;
+
+no rows selected
+
+SQL> ------group by job_id
+SQL> SELECT job_id, SUM(salary)
+  2  FROM Salary_detail
+  3  GROUP BY job_id;
+
+JOB_ID     SUM(SALARY)                                                                                                                                                                                  
+---------- -----------                                                                                                                                                                                  
+pu_cleark        14000                                                                                                                                                                                  
+DEV01            50000                                                                                                                                                                                  
+cleark           55000                                                                                                                                                                                  
+
+SQL> ------employee with same commission
+SQL> SELECT commission, COUNT(*)
+  2  FROM Salary_detail
+  3  GROUP BY commission;
+
+COMMISSION   COUNT(*)                                                                                                                                                                                   
+---------- ----------                                                                                                                                                                                   
+                    1                                                                                                                                                                                   
+       500          1                                                                                                                                                                                   
+       700          1                                                                                                                                                                                   
+
+SQL> -----max salary dept wise
+SQL> SELECT department_id, MAX(salary)
+  2  FROM Salary_detail
+  3  GROUP BY department_id;
+
+DEPARTMENT_ID MAX(SALARY)                                                                                                                                                                               
+------------- -----------                                                                                                                                                                               
+           30       55000                                                                                                                                                                               
+           20       50000                                                                                                                                                                               
+           40       14000                                                                                                                                                                               
+
+SQL> -----employees with salary> average salary
+SQL> SELECT *
+  2  FROM Salary_detail
+  3  WHERE salary > (SELECT AVG(salary) FROM Salary_detail);
+
+     EMPID JOB_ID         SALARY COMMISSION DEPARTMENT_ID                                                                                                                                               
+---------- ---------- ---------- ---------- -------------                                                                                                                                               
+       102 DEV01           50000        500            20                                                                                                                                               
+       103 cleark          55000                       30                                                                                                                                               
+
+SQL> -----employees with salary=maximum salary
+SQL> SELECT *
+  2  FROM Salary_detail
+  3  WHERE salary > (SELECT AVG(salary) FROM Salary_detail);
+
+     EMPID JOB_ID         SALARY COMMISSION DEPARTMENT_ID                                                                                                                                               
+---------- ---------- ---------- ---------- -------------                                                                                                                                               
+       102 DEV01           50000        500            20                                                                                                                                               
+       103 cleark          55000                       30                                                                                                                                               
+
+SQL> ------employees earning less than empid=102
+SQL> SELECT *
+  2  FROM Salary_detail
+  3  WHERE salary < (SELECT salary FROM Salary_detail WHERE empid = 101);
+
+no rows selected
+
+SQL> -----employees joined after empid=103
+SQL> SELECT *
+  2  FROM Emp_detail
+  3  WHERE dob > (SELECT dob FROM Emp_detail WHERE empid = 105);
+WHERE dob > (SELECT dob FROM Emp_detail WHERE empid = 105)
+      *
+ERROR at line 3:
+ORA-00904: "DOB": invalid identifier 
+
+
+SQL> -----same salary as emp=102
+SQL> SELECT *
+  2  FROM Salary_detail
+  3  WHERE salary = (SELECT salary FROM Salary_detail WHERE empid = 102);
+
+     EMPID JOB_ID         SALARY COMMISSION DEPARTMENT_ID                                                                                                                                               
+---------- ---------- ---------- ---------- -------------                                                                                                                                               
+       102 DEV01           50000        500            20                                                                                                                                               
+
+SQL> -----employee is same depatment empid=103
+SQL> SELECT *
+  2  FROM Salary_detail
+  3  WHERE department_id = (SELECT department_id
+  4                         FROM Salary_detail
+  5                         WHERE empid = 103);
+
+     EMPID JOB_ID         SALARY COMMISSION DEPARTMENT_ID                                                                                                                                               
+---------- ---------- ---------- ---------- -------------                                                                                                                                               
+       103 cleark          55000                       30                                                                                                                                               
+
+SQL> -----employee with salary> all employees in department 20
+SQL> SELECT *
+  2  FROM Salary_detail
+  3  WHERE salary > ALL (SELECT salary
+  4                      FROM Salary_detail
+  5                      WHERE department_id = 20);
+
+     EMPID JOB_ID         SALARY COMMISSION DEPARTMENT_ID                                                                                                                                               
+---------- ---------- ---------- ---------- -------------                                                                                                                                               
+       103 cleark          55000                       30                                                                                                                                               
+
+SQL> ------salary> at least one employee in dept 30
+SQL> SELECT *
+  2  FROM Salary_detail
+  3  WHERE salary > ANY (SELECT salary
+  4                      FROM Salary_detail
+  5                      WHERE department_id = 30);
+
+no rows selected
+
+SQL> ----all employees from both tables
+SQL> SELECT empid FROM Emp_detail
+  2  UNION
+  3  SELECT empid FROM Salary_detail;
+
+     EMPID                                                                                                                                                                                              
+----------                                                                                                                                                                                              
+       102                                                                                                                                                                                              
+       103                                                                                                                                                                                              
+       104                                                                                                                                                                                              
+
+SQL> ----commmon in both
+SQL> SELECT empid FROM Emp_detail
+  2  INTERSECT
+  3  SELECT empid FROM Salary_detail;
+
+     EMPID                                                                                                                                                                                              
+----------                                                                                                                                                                                              
+       102                                                                                                                                                                                              
+       103                                                                                                                                                                                              
+       104                                                                                                                                                                                              
+
+SQL> -----empid in emp_detail but not in salary_detail
+SQL> SELECT empid FROM Emp_detail
+  2  MINUS
+  3  SELECT empid FROM Salary_detail;
+
+no rows selected
+
+SQL> ----all employees name+ job_id
+SQL> SELECT first_name || ' ' || last_name AS emp_data FROM Emp_detail
+  2  UNION
+  3  SELECT job_id FROM Salary_detail;
+
+EMP_DATA                                                                                                                                                                                                
+-------------------------------------------------------------                                                                                                                                           
+Amit Sharma                                                                                                                                                                                             
+Arjun Deshmukh                                                                                                                                                                                          
+DEV01                                                                                                                                                                                                   
+Riya Patil                                                                                                                                                                                              
+cleark                                                                                                                                                                                                  
+pu_cleark                                                                                                                                                                                               
+
+6 rows selected.
+
+SQL> ----distinct salaries + adhar number
+SQL> SELECT salary FROM Salary_detail
+  2  UNION
+  3  SELECT adharno FROM Emp_detail;
+SELECT salary FROM Salary_detail
+       *
+ERROR at line 1:
+ORA-01790: expression must have same datatype as corresponding expression 
+
+
+SQL> ----all employees from both tables
+SQL> SELECT empid FROM Emp_detail
+  2  UNION ALL
+  3  SELECT empid FROM Salary_detail;
+
+     EMPID                                                                                                                                                                                              
+----------                                                                                                                                                                                              
+       102                                                                                                                                                                                              
+       103                                                                                                                                                                                              
+       104                                                                                                                                                                                              
+       102                                                                                                                                                                                              
+       103                                                                                                                                                                                              
+       104                                                                                                                                                                                              
+
+6 rows selected.
+
+SQL> spool off;
