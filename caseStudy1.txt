@@ -1,0 +1,548 @@
+SQL> desc customer;
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ CUSTOMER_ID                                                                                                       NOT NULL NUMBER
+ NAME                                                                                                              NOT NULL VARCHAR2(20)
+ EMAIL                                                                                                                      VARCHAR2(20)
+ PHONE                                                                                                             NOT NULL VARCHAR2(15)
+ ADDRESS                                                                                                                    VARCHAR2(30)
+
+SQL> 
+SQL> select * from customer;
+
+CUSTOMER_ID NAME                 EMAIL                PHONE           ADDRESS                                                                                                                           
+----------- -------------------- -------------------- --------------- ------------------------------                                                                                                    
+          1 Rahul Patil          rahul@gmail.com      9876543210      Pune                                                                                                                              
+          2 Sneha Deshmukh       sneha@yahoo.com      9123456780      Mumbai                                                                                                                            
+          3 Amit Sharma                               9812345678      Nagpur                                                                                                                            
+          4 Priya Joshi          priya@gmail.com      9001234567                                                                                                                                        
+          5 Kiran Kulkarni       kiran@outlook.com    9898989898      Nashik                                                                                                                            
+
+SQL> create table accounts(
+  2  account_id number primary key,
+  3  customer_id number,
+  4  accounttype varchar(20) not null,
+  5  balance number default 0 check(balance>=0),
+  6  foreign key(customer_id)references customer(cutomer_id))
+  7  /
+foreign key(customer_id)references customer(cutomer_id))
+                                            *
+ERROR at line 6:
+ORA-00904: "CUTOMER_ID": invalid identifier 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  CREATE TABLE accounts (
+  2  account_id NUMBER PRIMARY KEY,
+  3  customer_id NUMBER,
+  4  accounttype VARCHAR2(20) NOT NULL,
+  5  balance NUMBER DEFAULT 0 CHECK (balance >= 0),
+  6  FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
+  7* );
+SQL> /
+);
+ *
+ERROR at line 7:
+ORA-00911: invalid character 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  CREATE TABLE accounts (
+  2  account_id NUMBER PRIMARY KEY,
+  3  customer_id NUMBER,
+  4  accounttype VARCHAR2(20) NOT NULL,
+  5  balance NUMBER DEFAULT 0 CHECK (balance >= 0),
+  6  FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
+  7* )
+SQL> /
+
+Table created.
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  INSERT INTO accounts (account_id, customer_id, accounttype, balance)
+  2* VALUES (101, 1, 'Savings', 15000)
+SQL> /
+
+1 row created.
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  INSERT INTO accounts (account_id, customer_id, accounttype, balance)
+  2* VALUES (102, 2, 'Current', 25000)
+SQL> /
+
+1 row created.
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  INSERT INTO accounts (account_id, customer_id, accounttype, balance)
+  2* VALUES (103, 3, 'Savings', 10000)
+  3  /
+
+1 row created.
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  INSERT INTO accounts (account_id, customer_id, accounttype, balance)
+  2* VALUES (104, 4, 'Current', 8000)
+SQL> /
+
+1 row created.
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  INSERT INTO accounts (account_id, customer_id, accounttype, balance)
+  2* VALUES (105, 5, 'Savings', 30000)
+SQL> /
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> select * from accounts;
+
+ACCOUNT_ID CUSTOMER_ID ACCOUNTTYPE             BALANCE                                                                                                                                                  
+---------- ----------- -------------------- ----------                                                                                                                                                  
+       101           1 Savings                   15000                                                                                                                                                  
+       102           2 Current                   25000                                                                                                                                                  
+       103           3 Savings                   10000                                                                                                                                                  
+       104           4 Current                    8000                                                                                                                                                  
+       105           5 Savings                   30000                                                                                                                                                  
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  CREATE TABLE Transactions (
+  2  TransactionID NUMBER PRIMARY KEY,
+  3  AccountID NUMBER,
+  4  tDate DATE NOT NULL,
+  5  Amount NUMBER NOT NULL CHECK (Amount >= 0),
+  6  TransactionType VARCHAR2(20) NOT NULL,
+  7  FOREIGN KEY (AccountID) REFERENCES Accounts(AccountID)
+  8* )
+SQL> /
+FOREIGN KEY (AccountID) REFERENCES Accounts(AccountID)
+                                            *
+ERROR at line 7:
+ORA-00904: "ACCOUNTID": invalid identifier 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  CREATE TABLE Transactions (
+  2  TransactionID NUMBER PRIMARY KEY,
+  3  AccountID NUMBER,
+  4  tDate DATE NOT NULL,
+  5  Amount NUMBER NOT NULL CHECK (Amount >= 0),
+  6  TransactionType VARCHAR2(20) NOT NULL,
+  7  FOREIGN KEY (Account_ID) REFERENCES Accounts(Account_ID)
+  8* )
+SQL> /
+FOREIGN KEY (Account_ID) REFERENCES Accounts(Account_ID)
+             *
+ERROR at line 7:
+ORA-00904: "ACCOUNT_ID": invalid identifier 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  CREATE TABLE Transactions (
+  2      TransactionID NUMBER PRIMARY KEY,
+  3      AccountID NUMBER,
+  4      tDate DATE NOT NULL,
+  5      Amount NUMBER NOT NULL CHECK (Amount >= 0),
+  6      TransactionType VARCHAR2(20) NOT NULL,
+  7      FOREIGN KEY (AccountID) REFERENCES Accounts(account_id)
+  8* )
+SQL> /
+
+Table created.
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  INSERT INTO Transactions (TransactionID, AccountID, tDate, Amount, TransactionType)
+  2* VALUES (1001, 101, TO_DATE('2025-09-15','YYYY-MM-DD'), 5000, 'Deposit')
+SQL> /
+
+1 row created.
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  INSERT INTO Transactions (TransactionID, AccountID, tDate, Amount, TransactionType)
+  2* VALUES (1002, 102, TO_DATE('2025-09-15','YYYY-MM-DD'), 2000, 'Withdrawal')
+SQL> /
+
+1 row created.
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  INSERT INTO Transactions (TransactionID, AccountID, tDate, Amount, TransactionType)
+  2* VALUES (1003, 103, TO_DATE('2025-09-16','YYYY-MM-DD'), 3000, 'Deposit')
+SQL> /
+
+1 row created.
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  INSERT INTO Transactions (TransactionID, AccountID, tDate, Amount, TransactionType)
+  2* VALUES (1004, 104, TO_DATE('2025-09-16','YYYY-MM-DD'), 1000, 'Withdrawal')
+SQL> /
+
+1 row created.
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  INSERT INTO Transactions (TransactionID, AccountID, tDate, Amount, TransactionType)
+  2* VALUES (1005, 105, TO_DATE('2025-09-16','YYYY-MM-DD'), 7000, 'Deposit')
+SQL> /
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> select * from transactions;
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1001        101 15-SEP-25       5000 Deposit                                                                                                                                                   
+         1002        102 15-SEP-25       2000 Withdrawal                                                                                                                                                
+         1003        103 16-SEP-25       3000 Deposit                                                                                                                                                   
+         1004        104 16-SEP-25       1000 Withdrawal                                                                                                                                                
+         1005        105 16-SEP-25       7000 Deposit                                                                                                                                                   
+
+SQL> SELECT Name, Email FROM Customers;
+SELECT Name, Email FROM Customers
+                        *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+
+SQL> SELECT Name, Email FROM customer;
+
+NAME                 EMAIL                                                                                                                                                                              
+-------------------- --------------------                                                                                                                                                               
+Rahul Patil          rahul@gmail.com                                                                                                                                                                    
+Sneha Deshmukh       sneha@yahoo.com                                                                                                                                                                    
+Amit Sharma                                                                                                                                                                                             
+Priya Joshi          priya@gmail.com                                                                                                                                                                    
+Kiran Kulkarni       kiran@outlook.com                                                                                                                                                                  
+
+SQL> SELECT AccountID, Balance FROM accounts
+  2  ;
+SELECT AccountID, Balance FROM accounts
+       *
+ERROR at line 1:
+ORA-00904: "ACCOUNTID": invalid identifier 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1* selecy account_id, balance from accounts
+  2  /
+selecy account_id, balance from accounts
+*
+ERROR at line 1:
+ORA-00900: invalid SQL statement 
+
+
+SQL> select account_id,balance from accounts;
+
+ACCOUNT_ID    BALANCE                                                                                                                                                                                   
+---------- ----------                                                                                                                                                                                   
+       101      15000                                                                                                                                                                                   
+       102      25000                                                                                                                                                                                   
+       103      10000                                                                                                                                                                                   
+       104       8000                                                                                                                                                                                   
+       105      30000                                                                                                                                                                                   
+
+SQL> SELECT Customer_ID, Name, Email FROM Customer;
+
+CUSTOMER_ID NAME                 EMAIL                                                                                                                                                                  
+----------- -------------------- --------------------                                                                                                                                                   
+          1 Rahul Patil          rahul@gmail.com                                                                                                                                                        
+          2 Sneha Deshmukh       sneha@yahoo.com                                                                                                                                                        
+          3 Amit Sharma                                                                                                                                                                                 
+          4 Priya Joshi          priya@gmail.com                                                                                                                                                        
+          5 Kiran Kulkarni       kiran@outlook.com                                                                                                                                                      
+
+SQL> select * from transactions where amount>500;
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1001        101 15-SEP-25       5000 Deposit                                                                                                                                                   
+         1002        102 15-SEP-25       2000 Withdrawal                                                                                                                                                
+         1003        103 16-SEP-25       3000 Deposit                                                                                                                                                   
+         1004        104 16-SEP-25       1000 Withdrawal                                                                                                                                                
+         1005        105 16-SEP-25       7000 Deposit                                                                                                                                                   
+
+SQL> ----Write a query to fetch all customer records without using *
+SQL> select customer_id,name,email,phone,address from customer;
+
+CUSTOMER_ID NAME                 EMAIL                PHONE           ADDRESS                                                                                                                           
+----------- -------------------- -------------------- --------------- ------------------------------                                                                                                    
+          1 Rahul Patil          rahul@gmail.com      9876543210      Pune                                                                                                                              
+          2 Sneha Deshmukh       sneha@yahoo.com      9123456780      Mumbai                                                                                                                            
+          3 Amit Sharma                               9812345678      Nagpur                                                                                                                            
+          4 Priya Joshi          priya@gmail.com      9001234567                                                                                                                                        
+          5 Kiran Kulkarni       kiran@outlook.com    9898989898      Nashik                                                                                                                            
+
+SQL> ---Write a query to retrieve all transaction details for a specific AccountID (e.g., 101).
+SQL> select * from transactions where transactionid=1001;
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1001        101 15-SEP-25       5000 Deposit                                                                                                                                                   
+
+SQL> ---Write a query to find customers who are active (assuming IsActive = 1 exists in the Customers table).
+SQL> SELECT * FROM Customer WHERE IsActive = 1
+  2  ;
+SELECT * FROM Customer WHERE IsActive = 1
+                             *
+ERROR at line 1:
+ORA-00904: "ISACTIVE": invalid identifier 
+
+
+SQL> ---Write a query to retrieve the details of customers whose Name starts with 'J'.
+SQL> select * from customer where name like'j%';
+
+no rows selected
+
+SQL> ---Write a query to fetch customers who have an email address that contains "gmail.com"
+SQL> select * from customer where mail like'%gmail.com;
+ERROR:
+ORA-01756: quoted string not properly terminated 
+
+
+SQL> select * from customer where mail like'%gmail.com';
+select * from customer where mail like'%gmail.com'
+                             *
+ERROR at line 1:
+ORA-00904: "MAIL": invalid identifier 
+
+
+SQL> select * from customer where email like'%gmail.com';
+
+CUSTOMER_ID NAME                 EMAIL                PHONE           ADDRESS                                                                                                                           
+----------- -------------------- -------------------- --------------- ------------------------------                                                                                                    
+          1 Rahul Patil          rahul@gmail.com      9876543210      Pune                                                                                                                              
+          4 Priya Joshi          priya@gmail.com      9001234567                                                                                                                                        
+
+SQL> ---Write a query to list all transactions for the month of January 2024 (assuming tDate column exists in the Transactions table).
+SQL> select * from transaction
+  2  where tdate between to_date('2024-01-01','YYYY-MM-DD')
+  3  and to_date('2024-01--31','YYYY-MM-DD);
+ERROR:
+ORA-01756: quoted string not properly terminated 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  select * from transaction
+  2  where tdate between to_date('2024-01-01','YYYY-MM-DD')
+  3* and to_date('2024-01--31','YYYY-MM-DD')
+SQL> /
+select * from transaction
+              *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  select * from transactions
+  2  where tdate between to_date('2024-01-01','YYYY-MM-DD')
+  3* and to_date('2024-01--31','YYYY-MM-DD')
+SQL> /
+and to_date('2024-01--31','YYYY-MM-DD')
+            *
+ERROR at line 3:
+ORA-01847: day of month must be between 1 and last day of month 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  select * from transactions
+  2  where tdate between to_date('2024-01-01','YYYY-MM-DD')
+  3* and to_date('2024-01-31','YYYY-MM-DD')
+SQL> /
+
+no rows selected
+
+SQL> ---Write a query to find all accounts with a balance less than 500.
+SQL> select * from accounts where balance<500;
+
+no rows selected
+
+SQL> --Write a query to retrieve customers whose Phone number contains '123'.
+SQL> select * from customer where phone like'%123%';
+
+CUSTOMER_ID NAME                 EMAIL                PHONE           ADDRESS                                                                                                                           
+----------- -------------------- -------------------- --------------- ------------------------------                                                                                                    
+          2 Sneha Deshmukh       sneha@yahoo.com      9123456780      Mumbai                                                                                                                            
+          3 Amit Sharma                               9812345678      Nagpur                                                                                                                            
+          4 Priya Joshi          priya@gmail.com      9001234567                                                                                                                                        
+
+SQL> ---Write a query to find all customers who have an address starting with 'Pune'.
+SQL> select * from customer where address like'pune%';
+
+no rows selected
+
+SQL> select * from customer where address like'Pune%';
+
+CUSTOMER_ID NAME                 EMAIL                PHONE           ADDRESS                                                                                                                           
+----------- -------------------- -------------------- --------------- ------------------------------                                                                                                    
+          1 Rahul Patil          rahul@gmail.com      9876543210      Pune                                                                                                                              
+
+SQL> ----Write a query to list all transactions for a specific TransactionType (e.g., 'Deposit')
+SQL> select * from transactions
+  2  where transactiontype='Deposit';
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1001        101 15-SEP-25       5000 Deposit                                                                                                                                                   
+         1003        103 16-SEP-25       3000 Deposit                                                                                                                                                   
+         1005        105 16-SEP-25       7000 Deposit                                                                                                                                                   
+
+SQL> ---Write a query that will return all transactions whose TransactionType is 'Deposit' or 'Withdrawal'.
+SQL> select * from transactions
+  2  where treansactiontype in('Deposit','Withdrawal');
+where treansactiontype in('Deposit','Withdrawal')
+      *
+ERROR at line 2:
+ORA-00904: "TREANSACTIONTYPE": invalid identifier 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  select * from transactions
+  2* where transactiontype in('Deposit','Withdrawal')
+SQL> /
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1001        101 15-SEP-25       5000 Deposit                                                                                                                                                   
+         1002        102 15-SEP-25       2000 Withdrawal                                                                                                                                                
+         1003        103 16-SEP-25       3000 Deposit                                                                                                                                                   
+         1004        104 16-SEP-25       1000 Withdrawal                                                                                                                                                
+         1005        105 16-SEP-25       7000 Deposit                                                                                                                                                   
+
+SQL> ----Write a query that will list customers whose account type is either 'Savings' or 'Checking'
+SQL> select * from customer
+  2  where customer_id
+  3  in(select customer_id from accounts where accounttype in('Saving','Current;'))
+  4  ;
+
+no rows selected
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  select * from customer
+  2  where customer_id
+  3* in(select customer_id from accounts where accounttype in('Saving','Current'))
+  4  /
+
+CUSTOMER_ID NAME                 EMAIL                PHONE           ADDRESS                                                                                                                           
+----------- -------------------- -------------------- --------------- ------------------------------                                                                                                    
+          2 Sneha Deshmukh       sneha@yahoo.com      9123456780      Mumbai                                                                                                                            
+          4 Priya Joshi          priya@gmail.com      9001234567                                                                                                                                        
+
+SQL> ---Write a query to fetch all those transactions in which AccountID is either 102 or 104 or 106.
+SQL> select * from transactions
+  2  where account_id in(102,104,105);
+where account_id in(102,104,105)
+      *
+ERROR at line 2:
+ORA-00904: "ACCOUNT_ID": invalid identifier 
+
+
+SQL> SELECT * FROM TRANSACTIONS
+  2  WHERE ACCOUNT_ID IN(102,104,104);
+WHERE ACCOUNT_ID IN(102,104,104)
+      *
+ERROR at line 2:
+ORA-00904: "ACCOUNT_ID": invalid identifier 
+
+
+SQL> SELECT * FROM TRANSACTIONS
+  2  WHERE TRANSACTION_ID IN(1002,1004,1004);
+WHERE TRANSACTION_ID IN(1002,1004,1004)
+      *
+ERROR at line 2:
+ORA-00904: "TRANSACTION_ID": invalid identifier 
+
+
+SQL> SELECT * FROM TRANSACTIONS
+  2  WHERE TRANSACTIONID IN(1002,1004,1004);
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1002        102 15-SEP-25       2000 Withdrawal                                                                                                                                                
+         1004        104 16-SEP-25       1000 Withdrawal                                                                                                                                                
+
+SQL> ---Write a SQL query to retrieve all accounts whose Balance is in the range of 1000 to 5000.
+SQL> SELECT * FROM ACCOUNTS
+  2  WHERE BALANCE BETWEEN 1000 AND 5000;
+
+no rows selected
+
+SQL> SELECT * FROM ACCOUNTS
+  2  WHERE AMOUNT BETWEEN 1000 AND 5000;
+WHERE AMOUNT BETWEEN 1000 AND 5000
+      *
+ERROR at line 2:
+ORA-00904: "AMOUNT": invalid identifier 
+
+
+SQL> ---Find all customers who do not provide a phone number, such as Phone is NULL.
+SQL> SELECT * FROM CUSTOMER
+  2  WHERE AMOUNT IS NULL;
+WHERE AMOUNT IS NULL
+      *
+ERROR at line 2:
+ORA-00904: "AMOUNT": invalid identifier 
+
+
+SQL> SELECT * FROM TRANSACTIONS
+  2  WHERE AMOUNT IS NULL;
+
+no rows selected
+
+SQL> ---Write a query that displays the TransactionType along with a label 'High Transaction' if Amount is greater than 1000, and 'Low Transaction' if it's less than or equal to 1000.
+SQL> SELECT TRANSACTIONTYPE,
+  2  CASE WHEN AMOUNT>1000 THEN 'HIGH TRANSACTION'
+  3  ELSE'LOW TRANSACTION' END AS TRANSACTIONSTATUS
+  4  FROM TRANSACTIONS WHERE AMOUNT IS NOTNULL;
+FROM TRANSACTIONS WHERE AMOUNT IS NOTNULL
+                                  *
+ERROR at line 4:
+ORA-00908: missing NULL keyword 
+
+
+SQL> SPOOL OFF;

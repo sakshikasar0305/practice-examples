@@ -1,0 +1,196 @@
+SQL*Plus: Release 11.2.0.2.0 Production on Sun Sep 14 09:28:17 2025
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Enter user-name: hr
+Enter password:
+
+Connected to:
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+SQL> set pagesize 200;
+SQL> set linesize 200;
+SQL> selectb* from customer;
+SP2-0734: unknown command beginning "selectb* f..." - rest of line ignored.
+SQL> select * from customersl
+  2  ;
+select * from customersl
+              *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL> select * from customers
+  2  ;
+select * from customers
+              *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL> select * from customer;
+
+CUSTOMER_ID NAME                 EMAIL                PHONE                ADDRESS
+----------- -------------------- -------------------- -------------------- --------------------
+          1 john                 john@ex.com          123456789            123elmst
+          2 raj                  raj@ex.com           1334597099           1221elmst
+          3 radha                radha@ex.com         1133457099           1221pune
+
+SQL> select * from accounts;
+
+ACCOUNT_ID CUSTOMER_ID ACCOUNT_TYPE            BALANCE
+---------- ----------- -------------------- ----------
+         1           1 savings                   15000
+         2           2 savings                   19000
+         3           3 savings                   11000
+
+SQL> select * from transactions;
+
+TRANSACTION_ID ACCOUNT_ID T_DATE        AMOUNT TRANSACTION_TYPE
+-------------- ---------- --------- ---------- --------------------
+           101          1 12-MAY-05     500000 implicit
+           102          2 28-JUN-02    1000000 explicit
+           103          2 03-MAY-04    8000000 implicit
+
+SQL> spool C:\Users\user5\OneDrive\Desktop\sql1\caseStudy.txt
+SQL> /
+
+TRANSACTION_ID ACCOUNT_ID T_DATE        AMOUNT TRANSACTION_TYPE
+-------------- ---------- --------- ---------- --------------------
+           101          1 12-MAY-05     500000 implicit
+           102          2 28-JUN-02    1000000 explicit
+           103          2 03-MAY-04    8000000 implicit
+
+SQL> select * from customer;
+
+CUSTOMER_ID NAME                 EMAIL                PHONE                ADDRESS
+----------- -------------------- -------------------- -------------------- --------------------
+          1 john                 john@ex.com          123456789            123elmst
+          2 raj                  raj@ex.com           1334597099           1221elmst
+          3 radha                radha@ex.com         1133457099           1221pune
+
+SQL> select * from accounts;
+
+ACCOUNT_ID CUSTOMER_ID ACCOUNT_TYPE            BALANCE
+---------- ----------- -------------------- ----------
+         1           1 savings                   15000
+         2           2 savings                   19000
+         3           3 savings                   11000
+
+SQL> ---Write a query to retrieve the Name and Email of all customers from the Customers table.
+SQL> select name, email from customers;
+select name, email from customers
+                        *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL> select name, email from customer;
+
+NAME                 EMAIL
+-------------------- --------------------
+john                 john@ex.com
+raj                  raj@ex.com
+radha                radha@ex.com
+
+SQL> ---Write a query to fetch AccountID and Balance from the Accounts table.
+SQL> select account_id, balance from accounts;
+
+ACCOUNT_ID    BALANCE
+---------- ----------
+         1      15000
+         2      19000
+         3      11000
+
+SQL> ---Write a query to retrieve all columns from the Transactions table.
+SQL> select * from transactions;
+
+TRANSACTION_ID ACCOUNT_ID T_DATE        AMOUNT TRANSACTION_TYPE
+-------------- ---------- --------- ---------- --------------------
+           101          1 12-MAY-05     500000 implicit
+           102          2 28-JUN-02    1000000 explicit
+           103          2 03-MAY-04    8000000 implicit
+
+SQL> ----Write a query to fetch the CustomerID, Name, and Email of customers
+SQL> select customer_id,name,email from customer;
+
+CUSTOMER_ID NAME                 EMAIL
+----------- -------------------- --------------------
+          1 john                 john@ex.com
+          2 raj                  raj@ex.com
+          3 radha                radha@ex.com
+
+SQL> --Write a query to retrieve all columns from the Customers table.
+SQL> select * from customer;
+
+CUSTOMER_ID NAME                 EMAIL                PHONE                ADDRESS
+----------- -------------------- -------------------- -------------------- --------------------
+          1 john                 john@ex.com          123456789            123elmst
+          2 raj                  raj@ex.com           1334597099           1221elmst
+          3 radha                radha@ex.com         1133457099           1221pune
+
+SQL> ---Write a query to retrieve all columns from the Transactions table where the transaction amount is greater than 500.
+SQL> select * from transactions where amount>500;
+
+TRANSACTION_ID ACCOUNT_ID T_DATE        AMOUNT TRANSACTION_TYPE
+-------------- ---------- --------- ---------- --------------------
+           101          1 12-MAY-05     500000 implicit
+           102          2 28-JUN-02    1000000 explicit
+           103          2 03-MAY-04    8000000 implicit
+
+SQL> --Write a query to fetch all customer records without using *.
+SQL> select customer_id,name,email,phone,address from customer;
+
+CUSTOMER_ID NAME                 EMAIL                PHONE                ADDRESS
+----------- -------------------- -------------------- -------------------- --------------------
+          1 john                 john@ex.com          123456789            123elmst
+          2 raj                  raj@ex.com           1334597099           1221elmst
+          3 radha                radha@ex.com         1133457099           1221pune
+
+SQL> --Write a query to retrieve all transaction details for a specific AccountID (e.g., 101).
+SQL> select * from transactions where account_id=101;
+
+no rows selected
+
+SQL> select * from transactions where transaction_id=101;
+
+TRANSACTION_ID ACCOUNT_ID T_DATE        AMOUNT TRANSACTION_TYPE
+-------------- ---------- --------- ---------- --------------------
+           101          1 12-MAY-05     500000 implicit
+
+SQL> --
+Disconnected from Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+C:\Users\user5>sqlplus
+
+SQL*Plus: Release 11.2.0.2.0 Production on Sun Sep 14 10:01:00 2025
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Enter user-name: hr
+Enter password:
+
+Connected to:
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+SQL> spool C:\Users\user5\OneDrive\Desktop\sql1\caseStudy.txt
+SQL> ---Write a query to find customers who are active (assuming IsActive = 1 exists in the Customers table).
+SQL> select * from customer where IsActive=1;
+select * from customer where IsActive=1
+                             *
+ERROR at line 1:
+ORA-00904: "ISACTIVE": invalid identifier
+
+
+SQL> SELECT * FROM Customers WHERE IsActive = 1;
+SELECT * FROM Customers WHERE IsActive = 1
+              *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL> SELECT * FROM customer WHERE IsActive = 1;
+SELECT * FROM customer WHERE IsActive = 1
+                             *
+ERROR at line 1:
+ORA-00904: "ISACTIVE": invalid identifier

@@ -1,0 +1,450 @@
+SQL> set pagesize 200;
+SQL> set linesize 200;
+SQL> select * from tab;
+
+TNAME                          TABTYPE  CLUSTERID                                                                                                                                                       
+------------------------------ ------- ----------                                                                                                                                                       
+ACCOUNTS                       TABLE                                                                                                                                                                    
+CUSTOMER                       TABLE                                                                                                                                                                    
+TRANSACTIONS                   TABLE                                                                                                                                                                    
+
+SQL> select * from customer;
+
+CUSTOMER_ID NAME                 EMAIL                PHONE           ADDRESS                                                                                                                           
+----------- -------------------- -------------------- --------------- ------------------------------                                                                                                    
+          1 Rahul Patil          rahul@gmail.com      9876543210      Pune                                                                                                                              
+          2 Sneha Deshmukh       sneha@yahoo.com      9123456780      Mumbai                                                                                                                            
+          3 Amit Sharma                               9812345678      Nagpur                                                                                                                            
+          4 Priya Joshi          priya@gmail.com      9001234567                                                                                                                                        
+          5 Kiran Kulkarni       kiran@outlook.com    9898989898      Nashik                                                                                                                            
+
+SQL> select * from accounts;
+
+ACCOUNT_ID CUSTOMER_ID ACCOUNTTYPE             BALANCE                                                                                                                                                  
+---------- ----------- -------------------- ----------                                                                                                                                                  
+       101           1 Savings                   15000                                                                                                                                                  
+       102           2 Current                   25000                                                                                                                                                  
+       103           3 Savings                   10000                                                                                                                                                  
+       104           4 Current                    8000                                                                                                                                                  
+       105           5 Savings                   30000                                                                                                                                                  
+
+SQL> select * from transactions;
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1001        101 15-SEP-25       5000 Deposit                                                                                                                                                   
+         1002        102 15-SEP-25       2000 Withdrawal                                                                                                                                                
+         1003        103 16-SEP-25       3000 Deposit                                                                                                                                                   
+         1004        104 16-SEP-25       1000 Withdrawal                                                                                                                                                
+         1005        105 16-SEP-25       7000 Deposit                                                                                                                                                   
+
+SQL> ---Retrieve all transactions where the amount is greater than 1000.
+SQL> select * from transactions
+  2  where amount>1000;
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1001        101 15-SEP-25       5000 Deposit                                                                                                                                                   
+         1002        102 15-SEP-25       2000 Withdrawal                                                                                                                                                
+         1003        103 16-SEP-25       3000 Deposit                                                                                                                                                   
+         1005        105 16-SEP-25       7000 Deposit                                                                                                                                                   
+
+SQL> ---List all transactions sorted by date in descending order.
+SQL> select * from transactions
+  2  order by tdate desc;
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1003        103 16-SEP-25       3000 Deposit                                                                                                                                                   
+         1004        104 16-SEP-25       1000 Withdrawal                                                                                                                                                
+         1005        105 16-SEP-25       7000 Deposit                                                                                                                                                   
+         1002        102 15-SEP-25       2000 Withdrawal                                                                                                                                                
+         1001        101 15-SEP-25       5000 Deposit                                                                                                                                                   
+
+SQL> ---Retrieve all deposits and sort them by amount in descending order.
+SQL> select * fromtransactions
+  2  ;
+select * fromtransactions
+         *
+ERROR at line 1:
+ORA-00923: FROM keyword not found where expected 
+
+
+SQL> select * from transactions
+  2  where transactiontype='Deposite'
+  3  oeder by amount desc;
+oeder by amount desc
+*
+ERROR at line 3:
+ORA-00933: SQL command not properly ended 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  select * from transactions
+  2  where transactiontype='Deposite'
+  3* order by amount desc
+SQL> /
+
+no rows selected
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  select * from transactions
+  2  where transactiontype='Deposit'
+  3* order by amount desc
+SQL> /
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1005        105 16-SEP-25       7000 Deposit                                                                                                                                                   
+         1001        101 15-SEP-25       5000 Deposit                                                                                                                                                   
+         1003        103 16-SEP-25       3000 Deposit                                                                                                                                                   
+
+SQL> ---Retrieve the 5 most recent transactions.
+SQL> select * from(select * from transaction order by tdate desc)
+  2  where rownum<=5;
+select * from(select * from transaction order by tdate desc)
+                            *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  select * from(select * from transactions order by tdate desc)
+  2* where rownum<=5
+SQL> /
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1003        103 16-SEP-25       3000 Deposit                                                                                                                                                   
+         1005        105 16-SEP-25       7000 Deposit                                                                                                                                                   
+         1004        104 16-SEP-25       1000 Withdrawal                                                                                                                                                
+         1001        101 15-SEP-25       5000 Deposit                                                                                                                                                   
+         1002        102 15-SEP-25       2000 Withdrawal                                                                                                                                                
+
+SQL> ---Sort transactions first by transaction type and then by amount within each type.
+SQL> select * from transactions
+  2  order by transactiontype asc,amount desc;
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1005        105 16-SEP-25       7000 Deposit                                                                                                                                                   
+         1001        101 15-SEP-25       5000 Deposit                                                                                                                                                   
+         1003        103 16-SEP-25       3000 Deposit                                                                                                                                                   
+         1002        102 15-SEP-25       2000 Withdrawal                                                                                                                                                
+         1004        104 16-SEP-25       1000 Withdrawal                                                                                                                                                
+
+SQL> -- Retrieve transactions greater than 1000 that are either deposits or withdrawals.
+SQL> select * from transactions
+  2  where amount>1000
+  3  and
+  4  (transactiontype='Withdrawal'or Transactiontype='Deposit');
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1001        101 15-SEP-25       5000 Deposit                                                                                                                                                   
+         1002        102 15-SEP-25       2000 Withdrawal                                                                                                                                                
+         1003        103 16-SEP-25       3000 Deposit                                                                                                                                                   
+         1005        105 16-SEP-25       7000 Deposit                                                                                                                                                   
+
+SQL> ---Retrieve transactions that occurred within the first half of 2023.
+SQL> select * from transactions
+  2  where
+  3  tdate between to_date('2023-01-01','YYYY-MM-DD')
+  4  and
+  5  to_date('2023-06-30','YYYY-MM-DD');
+
+no rows selected
+
+SQL> --Retrieve transactions that occurred within the first half of 2023.
+SQL> select * from transactions
+  2  where transactiontype in('Deposit','Withdrawal');
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1001        101 15-SEP-25       5000 Deposit                                                                                                                                                   
+         1002        102 15-SEP-25       2000 Withdrawal                                                                                                                                                
+         1003        103 16-SEP-25       3000 Deposit                                                                                                                                                   
+         1004        104 16-SEP-25       1000 Withdrawal                                                                                                                                                
+         1005        105 16-SEP-25       7000 Deposit                                                                                                                                                   
+
+SQL> ---List all customers who do not have an address listed.
+SQL> select * from customers
+  2  where address is null;
+select * from customers
+              *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  select * from customer
+  2* where address is null
+SQL> /
+
+CUSTOMER_ID NAME                 EMAIL                PHONE           ADDRESS                                                                                                                           
+----------- -------------------- -------------------- --------------- ------------------------------                                                                                                    
+          4 Priya Joshi          priya@gmail.com      9001234567                                                                                                                                        
+
+SQL> -- Sort customers by address in ascending order placing NULL values last
+SQL> select * from customers order by address asec nulls last;
+select * from customers order by address asec nulls last
+                                         *
+ERROR at line 1:
+ORA-00933: SQL command not properly ended 
+
+
+SQL> select * from customers order by address asc nulls last;
+select * from customers order by address asc nulls last
+              *
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+
+
+SQL> select * from customer order by address asc nulls last;
+
+CUSTOMER_ID NAME                 EMAIL                PHONE           ADDRESS                                                                                                                           
+----------- -------------------- -------------------- --------------- ------------------------------                                                                                                    
+          2 Sneha Deshmukh       sneha@yahoo.com      9123456780      Mumbai                                                                                                                            
+          3 Amit Sharma                               9812345678      Nagpur                                                                                                                            
+          5 Kiran Kulkarni       kiran@outlook.com    9898989898      Nashik                                                                                                                            
+          1 Rahul Patil          rahul@gmail.com      9876543210      Pune                                                                                                                              
+          4 Priya Joshi          priya@gmail.com      9001234567                                                                                                                                        
+
+SQL> --Sort customers by address in ascending order, placing NULL values first
+SQL> select * from customer order by(case when address is null then 1 else 0 end),address asc;
+
+CUSTOMER_ID NAME                 EMAIL                PHONE           ADDRESS                                                                                                                           
+----------- -------------------- -------------------- --------------- ------------------------------                                                                                                    
+          2 Sneha Deshmukh       sneha@yahoo.com      9123456780      Mumbai                                                                                                                            
+          3 Amit Sharma                               9812345678      Nagpur                                                                                                                            
+          5 Kiran Kulkarni       kiran@outlook.com    9898989898      Nashik                                                                                                                            
+          1 Rahul Patil          rahul@gmail.com      9876543210      Pune                                                                                                                              
+          4 Priya Joshi          priya@gmail.com      9001234567                                                                                                                                        
+
+SQL> --Retrieve the top 5 most recent transactions using the FETCH FIRST clause.
+SQL> select * from transactions
+  2  order by tdate desc
+  3  fetch first 5 rows only;
+fetch first 5 rows only
+*
+ERROR at line 3:
+ORA-00933: SQL command not properly ended 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2  FROM transactions
+  3  ORDER BY tdate DESC
+  4* FETCH FIRST 5 ROWS ONLY
+SQL> /
+FETCH FIRST 5 ROWS ONLY
+*
+ERROR at line 4:
+ORA-00933: SQL command not properly ended 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2  FROM (select * from transactions
+  3  ORDER BY tdate DESC)
+  4* where rownum<=5
+SQL> /
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1003        103 16-SEP-25       3000 Deposit                                                                                                                                                   
+         1005        105 16-SEP-25       7000 Deposit                                                                                                                                                   
+         1004        104 16-SEP-25       1000 Withdrawal                                                                                                                                                
+         1001        101 15-SEP-25       5000 Deposit                                                                                                                                                   
+         1002        102 15-SEP-25       2000 Withdrawal                                                                                                                                                
+
+SQL> --Retrieve all customers whose names start with 'J'.
+SQL> SELECT *
+  2  FROM Customers
+  3  WHERE Name LIKE 'J%';
+FROM Customers
+     *
+ERROR at line 2:
+ORA-00942: table or view does not exist 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2  FROM customer
+  3* WHERE Name LIKE 'J%'
+SQL> /
+
+no rows selected
+
+SQL> --Perform a case-insensitive search for customers whose names start with 'j'
+SQL> select * from customer
+  2  where lower(name)like'j%';
+
+no rows selected
+
+SQL> --Retrieve all customers whose names do not end with 'Smith'
+SQL> select * from customer
+  2  where name not like'%smith';
+
+CUSTOMER_ID NAME                 EMAIL                PHONE           ADDRESS                                                                                                                           
+----------- -------------------- -------------------- --------------- ------------------------------                                                                                                    
+          1 Rahul Patil          rahul@gmail.com      9876543210      Pune                                                                                                                              
+          2 Sneha Deshmukh       sneha@yahoo.com      9123456780      Mumbai                                                                                                                            
+          3 Amit Sharma                               9812345678      Nagpur                                                                                                                            
+          4 Priya Joshi          priya@gmail.com      9001234567                                                                                                                                        
+          5 Kiran Kulkarni       kiran@outlook.com    9898989898      Nashik                                                                                                                            
+
+SQL> ---Retrieve all customers whose names do not end with 'Smith'
+SQL> select * from transactions
+  2  where(transactiontype='Withdrawal' and amount>1000)
+  3  or(transactiontype='Deposit' and amount>500);
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1001        101 15-SEP-25       5000 Deposit                                                                                                                                                   
+         1002        102 15-SEP-25       2000 Withdrawal                                                                                                                                                
+         1003        103 16-SEP-25       3000 Deposit                                                                                                                                                   
+         1005        105 16-SEP-25       7000 Deposit                                                                                                                                                   
+
+SQL> -- Retrieve transactions that are not deposits or withdrawals.
+SQL> select * from transactions
+  2  where transactiontype not in('Deposit','Withdrawal');
+
+no rows selected
+
+SQL> ---Sort transactions by a calculated column.
+SQL> select*,amount*1.05 as adjustAmount
+  2  from transactions
+  3  order by amount desc;
+select*,amount*1.05 as adjustAmount
+       *
+ERROR at line 1:
+ORA-00923: FROM keyword not found where expected 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  select* from transactions
+  2  amount*1.05 as Amount
+  3  from transactions
+  4* order by amount desc
+SQL> /
+amount*1.05 as Amount
+      *
+ERROR at line 2:
+ORA-00933: SQL command not properly ended 
+
+
+SQL> ---Retrieve customers whose names contain the letter 'a'.
+SQL> select * from customer
+  2  where name like'%a%';
+
+CUSTOMER_ID NAME                 EMAIL                PHONE           ADDRESS                                                                                                                           
+----------- -------------------- -------------------- --------------- ------------------------------                                                                                                    
+          1 Rahul Patil          rahul@gmail.com      9876543210      Pune                                                                                                                              
+          2 Sneha Deshmukh       sneha@yahoo.com      9123456780      Mumbai                                                                                                                            
+          3 Amit Sharma                               9812345678      Nagpur                                                                                                                            
+          4 Priya Joshi          priya@gmail.com      9001234567                                                                                                                                        
+          5 Kiran Kulkarni       kiran@outlook.com    9898989898      Nashik                                                                                                                            
+
+SQL> ---Retrieve the total number of transactions and sort by the highest amount.
+SQL> select transactiontype,count(*)as totaltransactions
+  2  from transactions
+  3  group by transactiontype
+  4  order by count
+  5  (*)desc;
+
+TRANSACTIONTYPE      TOTALTRANSACTIONS                                                                                                                                                                  
+-------------------- -----------------                                                                                                                                                                  
+Deposit                              3                                                                                                                                                                  
+Withdrawal                           2                                                                                                                                                                  
+
+SQL> ---Retrieve customers whose names do not contain the letter 'e'.
+SQL> select * from customer
+  2  where name not like'%e%';
+
+CUSTOMER_ID NAME                 EMAIL                PHONE           ADDRESS                                                                                                                           
+----------- -------------------- -------------------- --------------- ------------------------------                                                                                                    
+          1 Rahul Patil          rahul@gmail.com      9876543210      Pune                                                                                                                              
+          3 Amit Sharma                               9812345678      Nagpur                                                                                                                            
+          4 Priya Joshi          priya@gmail.com      9001234567                                                                                                                                        
+          5 Kiran Kulkarni       kiran@outlook.com    9898989898      Nashik                                                                                                                            
+
+SQL> --Retrieve all customers with a balance greater than or equal to 500, and order them by balance in descending order.
+SQL> select * from accounts
+  2  where balance>=500
+  3  order by balance desc;
+
+ACCOUNT_ID CUSTOMER_ID ACCOUNTTYPE             BALANCE                                                                                                                                                  
+---------- ----------- -------------------- ----------                                                                                                                                                  
+       105           5 Savings                   30000                                                                                                                                                  
+       102           2 Current                   25000                                                                                                                                                  
+       101           1 Savings                   15000                                                                                                                                                  
+       103           3 Savings                   10000                                                                                                                                                  
+       104           4 Current                    8000                                                                                                                                                  
+
+SQL> ---Retrieve the first five customers by account creation date.
+SQL> SELECT *
+  2  FROM (
+  3      SELECT *
+  4      FROM Customer
+  5      ORDER BY created_date ASC
+  6  )
+  7  WHERE ROWNUM <= 5;
+    ORDER BY created_date ASC
+             *
+ERROR at line 5:
+ORA-00904: "CREATED_DATE": invalid identifier 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  SELECT *
+  2  FROM (
+  3      SELECT *
+  4      FROM Customer
+  5      ORDER BY created_date ASC
+  6  )
+  7* WHERE ROWNUM <= 5
+SQL> /
+    ORDER BY created_date ASC
+             *
+ERROR at line 5:
+ORA-00904: "CREATED_DATE": invalid identifier 
+
+
+SQL> ---Retrieve transactions with an amount between 100 and 1000 and sort them by date.
+SQL> select * from transactions
+  2  where amount between 100 and 1000
+  3  order by tdate;
+
+TRANSACTIONID  ACCOUNTID TDATE         AMOUNT TRANSACTIONTYPE                                                                                                                                           
+------------- ---------- --------- ---------- --------------------                                                                                                                                      
+         1004        104 16-SEP-25       1000 Withdrawal                                                                                                                                                
+
+SQL> ---Retrieve all customers whose names start with the letter 'A' and order them by name.
+SQL> select * from customer
+  2  where name like'A%'
+  3  order by name;
+
+CUSTOMER_ID NAME                 EMAIL                PHONE           ADDRESS                                                                                                                           
+----------- -------------------- -------------------- --------------- ------------------------------                                                                                                    
+          3 Amit Sharma                               9812345678      Nagpur                                                                                                                            
+
+SQL> spool off;
